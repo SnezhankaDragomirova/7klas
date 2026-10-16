@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наръчник: Едновременна работа с няколко документа в Microsoft Word</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome за модерни икони -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        word: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            600: '#185abd', // Класическо Word синьо
+                            700: '#103f91',
+                            800: '#0c2d69',
+                            900: '#081e46'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Специфични стилове за предварителен преглед и отпечатване */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 11pt;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .content-section {
+                display: block !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0;
+                margin-bottom: 2rem;
+            }
+        }
+        
+        .kbd-key {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-bottom: 2px solid #94a3b8;
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 0.825rem;
+            font-family: monospace;
+            font-weight: 600;
+            color: #334155;
+            display: inline-block;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col">
+
+    <!-- Горен навигационен бар (Word Ribbon Style) -->
+    <header class="bg-word-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Заглавие с лого -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white text-xl font-bold border border-white/20">
+                        <i class="fa-solid fa-file-word text-blue-200"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white leading-tight">Microsoft Word Pro</h1>
+                        <p class="text-xs text-blue-200 hidden sm:block">Ръководство за мултидокументна продуктивност</p>
+                    </div>
+                </div>
+
+                <!-- Бързи действия: Печат и Помощ -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="window.print()" class="no-print inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium py-2 px-3.5 rounded-lg border border-white/25 transition">
+                        <i class="fa-solid fa-print"></i>
+                        <span class="hidden md:inline">Печат / PDF</span>
+                    </button>
+                    <button onclick="resetFilters()" class="no-print inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-medium py-2 px-3 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span class="hidden md:inline">Всички теми</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основен контейнер -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- Банер за въведение и Търсачка (no-print) -->
+        <div class="no-print bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="max-w-2xl">
+                    <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold bg-blue-50 text-word-700 mb-2">
+                        <i class="fa-solid fa-bolt"></i> Практически наръчник за Microsoft 365 / Word 2016-2024
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Едновременна работа с няколко документа</h2>
+                    <p class="text-sm sm:text-base text-slate-600 mt-2">
+                        Оптимизирайте работния си процес чрез паралелен преглед, разделяне на екрана, синхронно превъртане и дълбоко сравняване на редакции.
+                    </p>
+                </div>
+
+                <!-- Поле за търсене -->
+                <div class="w-full lg:w-80">
+                    <label for="guide-search" class="sr-only">Търсене в наръчника</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="guide-search" oninput="filterContent()" placeholder="Търсене на функция или клавиш..." class="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-word-600 focus:bg-white transition" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Бързи филтър-табове -->
+            <div class="mt-6 pt-5 border-t border-slate-100 flex flex-wrap gap-2 items-center text-xs sm:text-sm">
+                <span class="text-slate-500 font-medium mr-2">Теми:</span>
+                <button onclick="filterByTag('all')" class="tab-btn active-tab px-3 py-1.5 rounded-lg bg-word-600 text-white font-medium transition" data-tag="all">Всички</button>
+                <button onclick="filterByTag('view')" class="tab-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition" data-tag="view">Изгледи (Side by Side)</button>
+                <button onclick="filterByTag('split')" class="tab-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition" data-tag="split">Разделяне (Split)</button>
+                <button onclick="filterByTag('switch')" class="tab-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition" data-tag="switch">Превключване</button>
+                <button onclick="filterByTag('compare')" class="tab-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition" data-tag="compare">Сравняване (Compare)</button>
+                <button onclick="filterByTag('shortcuts')" class="tab-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition" data-tag="shortcuts">Клавишни комбинации</button>
+            </div>
+        </div>
+
+        <!-- Решетка с основните модули -->
+        <main id="content-container" class="space-y-8">
+
+            <!-- Раздел 1: Въведение и предимства -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="view split switch compare">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                        1
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900">Защо да работим с няколко документа паралелно?</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-blue-200 transition">
+                        <div class="text-word-600 text-2xl mb-2"><i class="fa-solid fa-copy"></i></div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Безкрайно копиране без грешки</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Прехвърляне на цитати, таблици и форматирани абзаци между изходен материал и финален доклад без непрекъснато минимизиране на прозорци.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-blue-200 transition">
+                        <div class="text-word-600 text-2xl mb-2"><i class="fa-solid fa-code-compare"></i></div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Сравнение ред по ред</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Идентифициране на корекции между оригинални договори, оферти или чернови от различни колеги в реален времеви паралел.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-blue-200 transition">
+                        <div class="text-word-600 text-2xl mb-2"><i class="fa-solid fa-gauge-high"></i></div>
+                        <h4 class="font-bold text-slate-800 text-base mb-1">Спестяване на до 40% време</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Елиминира когнитивното натоварване от постоянното превключване на фокуса между различни прозорци в лентата със задачи.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Раздел 2: Преглед един до друг и Синхронно превъртане -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="view">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                        2
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900">Преглед един до друг (View Side by Side) и синхронно превъртане</h3>
+                </div>
+
+                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Функцията <strong class="text-slate-900">View Side by Side</strong> автоматично преоразмерява два отворени документа на половината от ширината на екрана. В комбинация със <strong class="text-slate-900">Синхронното превъртане</strong>, когато движите мишката в единия файл, другият превърта автоматично със същата скорост.
+                </p>
+
+                <!-- Интерактивна илюстрация на Ribbon лентата -->
+                <div class="bg-slate-100 rounded-xl p-4 border border-slate-200 mb-6 font-sans">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-location-arrow text-word-600"></i> Път в лентата с менюта (Ribbon Menu):
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 text-sm">
+                        <span class="bg-white px-3 py-1.5 rounded-lg border border-slate-300 font-semibold text-slate-700">Раздел: <span class="text-word-600 font-bold">Изглед (View)</span></span>
+                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs"></i>
+                        <span class="bg-white px-3 py-1.5 rounded-lg border border-slate-300 font-semibold text-slate-700">Група: <span class="text-word-600 font-bold">Прозорец (Window)</span></span>
+                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs"></i>
+                        <span class="bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm"><i class="fa-solid fa-table-columns mr-1"></i> Преглед един до друг (View Side by Side)</span>
+                    </div>
+                </div>
+
+                <!-- Стъпки по точки -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800">Отворете двата документа</h5>
+                                <p class="text-xs text-slate-600">Уверете се, че и двата файла са отворени в Microsoft Word.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800">Активирайте режима</h5>
+                                <p class="text-xs text-slate-600">Отидете на <strong>View &rarr; View Side by Side</strong>. Ако имате отворени повече от два документа, Word ще ви попита с кой файл желаете да направите двойка.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800">Синхронно превъртане (Synchronous Scrolling)</h5>
+                                <p class="text-xs text-slate-600">Обикновено се включва автоматично. Ако искате да го деактивирате (за да четете различни места), кликнете бутона <i class="fa-solid fa-arrows-up-down text-word-600"></i> точно под <em>View Side by Side</em>.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800">Възстановяване на позицията (Reset Window Position)</h5>
+                                <p class="text-xs text-slate-600">Ако ръчно преоразмерите единия прозорец и изгубите симетрията, бутонът <strong>Reset Window Position</strong> мигновено връща перфектното разделение 50:50.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Интерактивна демонстрационна джаджа (Scroll Sync Simulator) -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-200">
+                            <span class="text-xs font-bold uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-desktop text-word-600"></i> Интерактивна симулация
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs text-slate-600 cursor-pointer flex items-center gap-1">
+                                    <input type="checkbox" id="syncCheck" checked class="rounded text-word-600 focus:ring-0"> Синхронно
+                                </label>
+                                <button onclick="resetSimWindows()" class="text-xs bg-slate-200 hover:bg-slate-300 px-2 py-0.5 rounded text-slate-700 transition" title="Възстанови размера">50:50</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <!-- Документ А -->
+                            <div class="border border-slate-300 rounded-lg bg-white overflow-hidden shadow-xs">
+                                <div class="bg-slate-100 px-2 py-1 border-b border-slate-200 font-bold text-slate-700 text-[11px] truncate flex items-center gap-1">
+                                    <i class="fa-regular fa-file-lines text-word-600"></i> Договор_Оригинал.docx
+                                </div>
+                                <div id="simDocA" onscroll="handleSimScroll('A')" class="h-36 overflow-y-auto p-2.5 space-y-2 text-slate-600 custom-scrollbar select-none">
+                                    <div class="font-bold text-slate-900">Раздел 1: Предмет</div>
+                                    <p class="leading-relaxed">Настоящият договор урежда доставката на оборудване съгласно спецификация А1.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 2: Срокове</div>
+                                    <p class="leading-relaxed">Срокът за предаване е точно 30 календарни дни от подписването.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 3: Цени</div>
+                                    <p class="leading-relaxed">Общата стойност възлиза на 15 000 лв без включен ДДС.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 4: Неустойки</div>
+                                    <p class="leading-relaxed">При забава се начислява по 0.1% на календарен ден.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 5: Подписи</div>
+                                    <p class="leading-relaxed">Документът е съставен в два еднообразни екземпляра.</p>
+                                </div>
+                            </div>
+
+                            <!-- Документ Б -->
+                            <div class="border border-slate-300 rounded-lg bg-white overflow-hidden shadow-xs">
+                                <div class="bg-slate-100 px-2 py-1 border-b border-slate-200 font-bold text-slate-700 text-[11px] truncate flex items-center gap-1">
+                                    <i class="fa-regular fa-file-lines text-word-600"></i> Договор_Редакция.docx
+                                </div>
+                                <div id="simDocB" onscroll="handleSimScroll('B')" class="h-36 overflow-y-auto p-2.5 space-y-2 text-slate-600 custom-scrollbar select-none">
+                                    <div class="font-bold text-slate-900">Раздел 1: Предмет</div>
+                                    <p class="leading-relaxed">Настоящият договор урежда доставката на оборудване съгласно коригирана спецификация Б2.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 2: Срокове</div>
+                                    <p class="leading-relaxed">Срокът за предаване се удължава до 45 календарни дни.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 3: Цени</div>
+                                    <p class="leading-relaxed">Общата стойност възлиза на 17 500 лв без включен ДДС.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 4: Неустойки</div>
+                                    <p class="leading-relaxed">При забава се начислява по 0.2% на календарен ден.</p>
+                                    <div class="font-bold text-slate-900 mt-2">Раздел 5: Подписи</div>
+                                    <p class="leading-relaxed">Документът е парафиран от правния отдел.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-2 text-center italic">
+                            * Превъртете единия прозорец – с включено "Синхронно", другият го следва автоматично.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Раздел 3: Подреждане на всички прозорци (Arrange All) -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="view">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                        3
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900">Подреждане на всички прозорци (Arrange All)</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div class="text-slate-600 text-sm space-y-3 leading-relaxed">
+                        <p>
+                            Когато работите с 3, 4 или повече документа (например референции, изходни таблици, протоколи и финален текст), отварянето и ръчното разполагане отнема ценно време.
+                        </p>
+                        <p>
+                            Чрез бутона <strong class="text-slate-800">Изглед &rarr; Подреди всички (View &rarr; Arrange All)</strong> Word нарежда абсолютно всички активно отворени прозорци хоризонтално или в равномерна мозайка върху екрана.
+                        </p>
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-lg text-amber-900 text-xs mt-2">
+                            <i class="fa-solid fa-lightbulb mr-1 text-amber-600"></i> <strong>Windows Snap съвет:</strong> Комбинирайте със системната функция на Windows чрез клавишите <span class="kbd-key"><i class="fa-brands fa-windows"></i></span> + <span class="kbd-key">&larr;</span> / <span class="kbd-key">&rarr;</span> / <span class="kbd-key">&uarr;</span> / <span class="kbd-key">&darr;</span> за бързо разделяне на 2 или 4 квадранта на дисплея!
+                        </div>
+                    </div>
+
+                    <!-- Визуална диаграма -->
+                    <div class="bg-slate-900 text-white rounded-xl p-5 shadow-inner">
+                        <div class="text-xs text-slate-400 font-mono mb-3 flex items-center justify-between">
+                            <span><i class="fa-solid fa-layer-group text-blue-400 mr-2"></i>Схема: Arrange All (3+ документа)</span>
+                            <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-blue-300">Auto Grid</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 h-32 text-[11px] font-mono">
+                            <div class="bg-slate-800/90 border border-slate-700 rounded p-2 flex flex-col justify-between">
+                                <span class="text-blue-400 font-bold">Word #1 (Доклад)</span>
+                                <span class="text-slate-500 text-[10px]">View / Active</span>
+                            </div>
+                            <div class="bg-slate-800/90 border border-slate-700 rounded p-2 flex flex-col justify-between">
+                                <span class="text-slate-300">Word #2 (Бележки)</span>
+                                <span class="text-slate-500 text-[10px]">Referenced</span>
+                            </div>
+                            <div class="col-span-2 bg-slate-800/90 border border-slate-700 rounded p-2 flex items-center justify-between">
+                                <span class="text-slate-300">Word #3 (Финансов анекс)</span>
+                                <span class="text-slate-500 text-[10px]">Background Window</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Раздел 4: Разделяне на един и същ документ (Split Window) -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="split">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                        4
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900">Разделяне на един и същ документ на два панела (Split Window)</h3>
+                </div>
+
+                <div class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Често не са ви нужни два отделни файла, а се налага да преглеждате <strong class="text-slate-900">различни части от един и същи дълъг документ</strong> — например четете Въведението на страница 2, докато пишете Заключението на страница 85, или следите дефинициите в началото, докато попълвате формули по-надолу.
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-split-up-and-left text-word-600"></i> Как се активира Split:
+                        </h4>
+                        <ol class="space-y-3 text-xs sm:text-sm text-slate-700 list-decimal list-inside">
+                            <li>Отворете желания документ в Word.</li>
+                            <li>В горното меню изберете <strong>Изглед (View)</strong>.</li>
+                            <li>Кликнете върху бутона <strong>Раздели (Split)</strong> в групата "Window".</li>
+                            <li>На екрана ще се появи хоризонтална разделителна линия. Двата панела имат отделни скрол-барове!</li>
+                            <li><strong>Премахване:</strong> След като приключите, бутонът се променя на <strong>Премахни разделянето (Remove Split)</strong>.</li>
+                        </ol>
+                        <div class="mt-4 pt-3 border-t border-slate-200 text-xs text-slate-500">
+                            <strong>Бърз клавиш:</strong> <span class="kbd-key">Ctrl</span> + <span class="kbd-key">Alt</span> + <span class="kbd-key">S</span> включва и изключва разделянето веднага.
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                            <i class="fa-regular fa-window-restore text-word-600"></i> Алтернатива: Нов прозорец (New Window)
+                        </h4>
+                        <p class="text-xs sm:text-sm text-slate-600 mb-3">
+                            Ако използвате <strong>два монитора</strong>, вместо Split изберете:
+                        </p>
+                        <div class="p-3 bg-white rounded-lg border border-slate-200 text-xs font-medium text-slate-800 space-y-1">
+                            <p class="text-word-700 font-bold"><i class="fa-solid fa-circle-check"></i> View &rarr; New Window (Нов прозорец)</p>
+                            <p class="text-slate-600">Word ще отвори абсолютно същия документ във втори отделен прозорец (маркиран с <em>Име:1</em> и <em>Име:2</em>). Преместете втория прозорец на втория си монитор! Всички редакции, направени в единия, се отразяват на момента и в другия.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Раздел 5: Бързо превключване между документи -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="switch shortcuts">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                        5
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900">Бързо превключване между отворени документи</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="border border-slate-200 rounded-xl p-4 bg-white hover:shadow-md transition">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-word-700 flex items-center justify-center font-bold mb-3">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1.5">През менюто на Word</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                            Отидете на <strong>Изглед &rarr; Превключи прозорците (View &rarr; Switch Windows)</strong>. Отваря се списък с имената на всички активни файлове. До текущия документ има отметка.
+                        </p>
+                        <span class="text-[11px] text-slate-400 font-mono">View &gt; Switch Windows</span>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4 bg-white hover:shadow-md transition">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-word-700 flex items-center justify-center font-bold mb-3">
+                            <i class="fa-solid fa-keyboard"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1.5">Превключване само в Word</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                            Използвайте комбинацията:
+                        </p>
+                        <div class="mb-2">
+                            <span class="kbd-key">Ctrl</span> + <span class="kbd-key">F6</span>
+                        </div>
+                        <p class="text-xs text-slate-500">
+                            Прескача циклично само между прозорците на Word, пренебрегвайки браузъра, Excel или пощата.
+                        </p>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4 bg-white hover:shadow-md transition">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-word-700 flex items-center justify-center font-bold mb-3">
+                            <i class="fa-brands fa-windows"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1.5">Превключване на ниво Windows</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                            Глобалният класически метод:
+                        </p>
+                        <div class="mb-2">
+                            <span class="kbd-key">Alt</span> + <span class="kbd-key">Tab</span>
+                        </div>
+                        <p class="text-xs text-slate-500">
+                            Бързо връщане към последно използвания прозорец с един клик.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Раздел 6: Сравняване на редакции (Compare Documents) -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="compare">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                        6
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900">Сравняване на две версии на документ (Compare Documents)</h3>
+                </div>
+
+                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Когато получите редактиран файл от колега, който е забравил да включи опцията за проследяване на промените (Track Changes), инструментът <strong class="text-slate-900">Compare</strong> автоматично изчислява всяка една добавена, изтрита или форматирана дума.
+                </p>
+
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-4">
+                    <div class="flex items-center gap-2 text-word-700 font-bold text-sm">
+                        <i class="fa-solid fa-code-compare"></i> Инструкции стъпка по стъпка:
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                        <div class="bg-white p-3.5 rounded-lg border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Стъпка 1: Меню</div>
+                            <p class="text-slate-600">Кликнете върху раздела <strong>Преглед (Review)</strong> в горната лента.</p>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-lg border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Стъпка 2: Compare</div>
+                            <p class="text-slate-600">Натиснете бутона <strong>Сравни (Compare) &rarr; Сравни (Compare...)</strong>.</p>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-lg border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Стъпка 3: Избор</div>
+                            <p class="text-slate-600">В левия панел заредете <em>Оригиналния документ</em>, а в десния — <em>Ревизирания</em>.</p>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-lg border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Стъпка 4: Нов отчет</div>
+                            <p class="text-slate-600">Натиснете <strong>OK</strong>. Word генерира нов обединен файл с подчертани промени в червено/синьо.</p>
+                        </div>
+                    </div>
+
+                    <!-- Банер съвет -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-900 flex items-start gap-2.5">
+                        <i class="fa-solid fa-circle-info text-blue-600 mt-0.5 text-sm"></i>
+                        <div>
+                            <strong>Функция Combine (Обединяване):</strong> Ако няколко души са преглеждали един и същ файл и всеки е върнал своя версия с коментари, използвайте <strong>Review &rarr; Compare &rarr; Combine (Обединяване на редакции от множество автори)</strong>, за да слеете всички корекции в един документ.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Раздел 7: Таблица с клавишни комбинации -->
+            <section class="content-section bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8" data-category="shortcuts">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <div class="flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-blue-100 text-word-700 flex items-center justify-center font-bold text-lg">
+                            7
+                        </span>
+                        <h3 class="text-xl font-bold text-slate-900">Бързи клавишни комбинации (Shortcuts)</h3>
+                    </div>
+                    <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium">Спестете време без мишка</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 bg-slate-50 text-slate-600 uppercase tracking-wider text-[11px]">
+                                <th class="py-3 px-4 rounded-l-lg font-semibold">Клавишна комбинация</th>
+                                <th class="py-3 px-4 font-semibold">Действие</th>
+                                <th class="py-3 px-4 rounded-r-lg font-semibold">Контекст на приложение</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key">Ctrl</span> + <span class="kbd-key">F6</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Следващ отворен Word документ</td>
+                                <td class="py-3.5 px-4 text-slate-500">Превключва веднага към следващия прозорец на Word</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key">Ctrl</span> + <span class="kbd-key">Shift</span> + <span class="kbd-key">F6</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Предишен отворен Word документ</td>
+                                <td class="py-3.5 px-4 text-slate-500">Връща към предходния файл в обратен ред</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key">Ctrl</span> + <span class="kbd-key">Alt</span> + <span class="kbd-key">S</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Разделяне / Премахване на панела (Split)</td>
+                                <td class="py-3.5 px-4 text-slate-500">Разполовява екрана на един и същ файл</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key">Alt</span> + <span class="kbd-key">Tab</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Глобално превключване на прозорци</td>
+                                <td class="py-3.5 px-4 text-slate-500">Системно бързо преминаване към предишно приложение</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key"><i class="fa-brands fa-windows"></i></span> + <span class="kbd-key">&larr;</span> / <span class="kbd-key">&rarr;</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Прилепяне на прозорец (Snap Assist)</td>
+                                <td class="py-3.5 px-4 text-slate-500">Залепя прозореца точно на лявата или дясната половина на монитора</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key">Ctrl</span> + <span class="kbd-key">N</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Нов празен документ</td>
+                                <td class="py-3.5 px-4 text-slate-500">Създава нов празен файл без спиране на текущия</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/40 transition">
+                                <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                    <span class="kbd-key">Ctrl</span> + <span class="kbd-key">W</span>
+                                </td>
+                                <td class="py-3.5 px-4 font-medium text-slate-900">Затваряне на активния документ</td>
+                                <td class="py-3.5 px-4 text-slate-500">Затваря само текущия файл, запазвайки останалите</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Раздел: Често задавани въпроси и добри практики -->
+            <section class="content-section bg-gradient-to-r from-slate-900 to-word-800 rounded-2xl shadow-sm p-6 sm:p-8 text-white" data-category="view split compare">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-blue-300"></i> Професионални съвети и добри практики
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs sm:text-sm text-slate-200">
+                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
+                        <h4 class="font-bold text-white mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-display text-blue-300"></i> Автоматично възстановяване при затваряне
+                        </h4>
+                        <p class="leading-relaxed">
+                            Ако затворите Word, докато прозорците са подредени един до друг, при следващо стартиране той може да се отвори в намален размер. Използвайте <span class="kbd-key text-slate-800"><i class="fa-brands fa-windows"></i></span> + <span class="kbd-key text-slate-800">&uarr;</span> за бързо разпъване на пълен екран.
+                        </p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
+                        <h4 class="font-bold text-white mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lock text-blue-300"></i> Защита от презаписване
+                        </h4>
+                        <p class="leading-relaxed">
+                            Когато отваряте стари версии за справка, отворете ги като <em>"Read-Only" (Само за четене)</em>, за да избегнете неволно запазване на корекциите върху старите данни.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Съобщение при празно търсене -->
+        <div id="noResults" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 mt-6">
+            <i class="fa-solid fa-folder-open text-slate-300 text-5xl mb-3"></i>
+            <h4 class="text-slate-700 font-bold text-lg">Няма намерени резултати</h4>
+            <p class="text-slate-500 text-sm mt-1">Опитайте с друга ключова дума, например "split", "сравняване", "alt+tab" или "скрол".</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-word-600 text-white rounded-lg text-xs font-semibold hover:bg-word-700 transition">
+                Покажи всички раздели
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Футър -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-book-bookmark text-word-600"></i>
+                <span>Интерактивно ръководство по компютърна грамотност и офис продуктивност</span>
+            </div>
+            <div>
+                <span>Готово за отпечатване или запазване като PDF (Ctrl + P)</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Логика на интерактивните контроли -->
+    <script>
+        // Търсене в реално време
+        function filterContent() {
+            const query = document.getElementById('guide-search').value.toLowerCase().trim();
+            const sections = document.querySelectorAll('.content-section');
+            let visibleCount = 0;
+
+            sections.forEach(sec => {
+                const text = sec.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    sec.style.display = '';
+                    visibleCount++;
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+
+            const noResults = document.getElementById('noResults');
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        }
+
+        // Филтриране по категории/табове
+        function filterByTag(tag) {
+            // Маркиране на бутона
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.getAttribute('data-tag') === tag) {
+                    btn.className = 'tab-btn px-3 py-1.5 rounded-lg bg-word-600 text-white font-medium transition';
+                } else {
+                    btn.className = 'tab-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition';
+                }
+            });
+
+            const sections = document.querySelectorAll('.content-section');
+            let visibleCount = 0;
+
+            sections.forEach(sec => {
+                const category = sec.getAttribute('data-category') || '';
+                if (tag === 'all' || category.includes(tag)) {
+                    sec.style.display = '';
+                    visibleCount++;
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+
+            // Изчистване на търсенето при клик на таб
+            document.getElementById('guide-search').value = '';
+            document.getElementById('noResults').classList.add('hidden');
+        }
+
+        // Изчистване на всички филтри
+        function resetFilters() {
+            document.getElementById('guide-search').value = '';
+            filterByTag('all');
+        }
+
+        // Симулатор на синхронно превъртане
+        let isSyncingA = false;
+        let isSyncingB = false;
+
+        function handleSimScroll(source) {
+            const isSync = document.getElementById('syncCheck').checked;
+            if (!isSync) return;
+
+            const docA = document.getElementById('simDocA');
+            const docB = document.getElementById('simDocB');
+
+            if (source === 'A' && !isSyncingA) {
+                isSyncingB = true;
+                const percentage = docA.scrollTop / (docA.scrollHeight - docA.clientHeight);
+                docB.scrollTop = percentage * (docB.scrollHeight - docB.clientHeight);
+                setTimeout(() => { isSyncingB = false; }, 50);
+            } else if (source === 'B' && !isSyncingB) {
+                isSyncingA = true;
+                const percentage = docB.scrollTop / (docB.scrollHeight - docB.clientHeight);
+                docA.scrollTop = percentage * (docA.scrollHeight - docA.clientHeight);
+                setTimeout(() => { isSyncingA = false; }, 50);
+            }
+        }
+
+        function resetSimWindows() {
+            const docA = document.getElementById('simDocA');
+            const docB = document.getElementById('simDocB');
+            docA.scrollTop = 0;
+            docB.scrollTop = 0;
+        }
+    </script>
+</body>
+</html>
